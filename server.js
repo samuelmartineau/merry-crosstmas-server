@@ -3,6 +3,10 @@ var app = express();
 //var mailConfig = require('./config/mailConfig');
 var nodemailer = require('nodemailer');
 var mg = require('nodemailer-mailgun-transport');
+var bodyParser = require('body-parser');
+
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 var port = process.env.PORT || 5000;
 
@@ -18,6 +22,13 @@ var nodemailerMailgun = nodemailer.createTransport(mg(auth));
 app.get('/', function(req, res) {
 	res.send('hello world');
 });
+
+app.post('/send', function(req, res) {
+	console.log(req.body);
+	res.send('send mail');
+});
+
+/*
 
 // setup e-mail data with unicode symbols
 var mailOptions = {
@@ -41,6 +52,8 @@ app.post('/send', function(req, res) {
 		}
 	});
 });
+
+*/
 
 process.on('uncaughtException', function (err) {
     console.log('uncaughtException', err);
