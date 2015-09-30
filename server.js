@@ -5,6 +5,8 @@ var nodemailer = require('nodemailer');
 
 var port = process.env.PORT || 5000;
 
+console.log('mail config', mailConfig);
+
 var transporter = nodemailer.createTransport(mailConfig);
 
 app.get('/', function(req, res) {
