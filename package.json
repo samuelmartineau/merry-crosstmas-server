@@ -2,15 +2,12 @@
   "name": "merry-crosstmas-server",
   "version": "0.0.1",
   "description": "merry-crosstmas server",
-  "main": "gulpfile.js",
+  "main": "server.js",
   "engines": {
     "npm": "~4.0.0"
   },
   "scripts": {
-    "dev": "gulp dev",
-    "build": "gulp build",
-    "quality": "gulp quality",
-    "coveralls": "istanbul cover -x '**/utils.js' tape -R spec ./tests/**/*.js"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
