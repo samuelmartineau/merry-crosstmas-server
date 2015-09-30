@@ -15,7 +15,7 @@ app.get('/', function(req, res) {
 
 // setup e-mail data with unicode symbols
 var mailOptions = {
-    from: 'Fred Foo ✔ <foo@blurdybloop.com>', // sender address
+    from: 'Merry Crosstmas ✔ <'+process.env.MAIL_USER+'>', // sender address
     to: 'sam@yopmail.com, sam@yopmail.com', // list of receivers
     subject: 'Hello ✔', // Subject line
     text: 'Hello world ✔', // plaintext body
