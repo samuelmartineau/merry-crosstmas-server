@@ -26,8 +26,10 @@ app.post('/send', function(req, res) {
 	transporter.sendMail(mailOptions, function(error, info) {
 		if (error) {
 			console.log('sendMail', error);
+			res.send('mail error');
 		} else {
 			console.log('Message sent: ' + info.response);
+			res.send('mail success');
 		}
 	});
 });
