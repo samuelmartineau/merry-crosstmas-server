@@ -14,13 +14,14 @@ app.get('/', function(req, res) {
 // setup e-mail data with unicode symbols
 var mailOptions = {
     from: 'Merry Crosstmas ✔ <kikou@lol.fr>', // sender address
-    to: 'sam@yopmail.com', // list of receivers
+    to: 'martineau.samuel.1990+test@gmail.com', // list of receivers
     subject: 'Hello ✔', // Subject line
     text: 'Hello world ✔', // plaintext body
     html: '<b>Hello world ✔</b>' // html body
 };
 
 app.post('/send', function(req, res) {
+
 	// send mail with defined transport object
 	transporter.sendMail(mailOptions, function(error, info) {
 		if (error) {
