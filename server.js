@@ -13,8 +13,8 @@ app.get('/', function(req, res) {
 
 // setup e-mail data with unicode symbols
 var mailOptions = {
-    from: 'Merry Crosstmas ✔ <'+process.env.MAIL_USER+'>', // sender address
-    to: 'sam@yopmail.com, sam@yopmail.com', // list of receivers
+    from: 'Merry Crosstmas ✔ <kikou@lol.fr>', // sender address
+    to: 'sam@yopmail.com', // list of receivers
     subject: 'Hello ✔', // Subject line
     text: 'Hello world ✔', // plaintext body
     html: '<b>Hello world ✔</b>' // html body
@@ -23,8 +23,8 @@ var mailOptions = {
 app.post('/send', function(req, res) {
 	// send mail with defined transport object
 	transporter.sendMail(mailOptions, function(error, info) {
-		if ('sendMail', error) {
-			console.log(error);
+		if (error) {
+			console.log('sendMail', error);
 		} else {
 			console.log('Message sent: ' + info.response);
 		}
