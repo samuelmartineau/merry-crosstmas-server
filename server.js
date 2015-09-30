@@ -5,8 +5,6 @@ var nodemailer = require('nodemailer');
 
 var port = process.env.PORT || 5000;
 
-console.log('mail config', mailConfig);
-
 var transporter = nodemailer.createTransport(mailConfig);
 
 app.get('/', function(req, res) {
@@ -25,12 +23,16 @@ var mailOptions = {
 app.post('/send', function(req, res) {
 	// send mail with defined transport object
 	transporter.sendMail(mailOptions, function(error, info) {
-		if (error) {
+		if ('sendMail', error) {
 			console.log(error);
 		} else {
 			console.log('Message sent: ' + info.response);
 		}
 	});
+});
+
+process.on('uncaughtException', function (err) {
+    console.log('uncaughtException', err);
 });
 
 // START THE SERVER
