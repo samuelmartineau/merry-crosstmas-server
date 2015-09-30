@@ -1,11 +1,19 @@
 var express = require('express');
 var app = express();
-var mailConfig = require('./config/mailConfig');
+//var mailConfig = require('./config/mailConfig');
 var nodemailer = require('nodemailer');
+var mg = require('nodemailer-mailgun-transport');
 
 var port = process.env.PORT || 5000;
 
-var transporter = nodemailer.createTransport(mailConfig);
+var auth = {
+  auth: {
+    api_key: process.env.API_KEY,
+    domain: process.env.DOMAIN
+  }
+}
+
+var nodemailerMailgun = nodemailer.createTransport(mg(auth));
 
 app.get('/', function(req, res) {
 	res.send('hello world');
@@ -23,7 +31,7 @@ var mailOptions = {
 app.post('/send', function(req, res) {
 
 	// send mail with defined transport object
-	transporter.sendMail(mailOptions, function(error, info) {
+	nodemailerMailgun.sendMail(mailOptions, function(error, info) {
 		if (error) {
 			console.log('sendMail', error);
 			res.send('mail error');
