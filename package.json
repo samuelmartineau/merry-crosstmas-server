@@ -1,0 +1,43 @@
+{
+  "name": "merry-crosstmas-server",
+  "version": "0.0.1",
+  "description": "merry-crosstmas server",
+  "main": "gulpfile.js",
+  "engines": {
+    "npm": "~4.0.0"
+  },
+  "scripts": {
+    "dev": "gulp dev",
+    "build": "gulp build",
+    "quality": "gulp quality",
+    "coveralls": "istanbul cover -x '**/utils.js' tape -R spec ./tests/**/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samuelmartineau/merry-crosstmas.git"
+  },
+  "keywords": [
+    "christmass",
+    "email",
+    "friends",
+    "cross"
+  ],
+  "author": {
+    "name": "Samuel Martineau",
+    "mail": "samuelmartineau1990@gmail.com",
+    "url": "samuelmartineau.github.io"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/samuelmartineau/merry-crosstmas/issues"
+  },
+  "homepage": "https://github.com/samuelmartineau/merry-crosstmas#readme",
+  "devDependencies": {
+    "express": "^4.13.3",
+    "nodemailer": "^1.5.0"
+  },
+  "dependencies": {},
+  "pre-commit": [
+    "quality"
+  ]
+}
