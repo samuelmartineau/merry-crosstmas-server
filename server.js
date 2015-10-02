@@ -11,8 +11,10 @@ var utils = require('./utils');
 var async = require('async');
 
 var sanitizeConfig = {
-  allowedTags: [ 'b', 'i', 'em', 'strong', 'p', 'div' ]
+  allowedTags: [ 'b', 'i', 'em', 'strong', 'p', 'div', 'br']
 };
+
+var re = /$friend$/gi;
 
 var template = new EmailTemplate(path.join(__dirname, 'mail'));
 
@@ -68,7 +70,7 @@ app.post('/send', function(req, res) {
 						from: 'Merry Crosstmas <messages-noreply@merry-crosstmas.com>',
 						to: item.from.mail,
 						subject: 'Secret Santa friend designation',
-						html: results.html,
+						html: results.html.replace(re, item.to.name),
 						text: results.text
 					}, function(err, responseStatus) {
 						if (err) {
