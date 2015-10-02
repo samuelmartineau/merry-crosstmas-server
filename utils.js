@@ -14,13 +14,13 @@ var isValid = function(params) {
   }
 
   // contacts is an array
-  if (params.contacts.isArray) {
+  if (!Array.isArray(params.contacts)) {
     return false;
   }
 
   // contacts length > 2 because offer gifts between 2 friends isn't anonymous...
   // More than 20 is broadcasting...
-  if (params.contacts.length < 3 && params.contacts.length < 21) {
+  if (params.contacts.length < 3 || params.contacts.length > 20) {
     return false;
   }
 
