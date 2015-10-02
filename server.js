@@ -14,7 +14,7 @@ var sanitizeConfig = {
   allowedTags: [ 'b', 'i', 'em', 'strong', 'p', 'div', 'br']
 };
 
-var re = /$friend$/gi;
+var re = /\$friend\$/gi;
 
 var template = new EmailTemplate(path.join(__dirname, 'mail'));
 
