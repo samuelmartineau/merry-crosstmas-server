@@ -64,10 +64,8 @@ app.post('/send', function(req, res) {
 				template.render(item, function(err, results) {
 					if (err) return next(err)
 
-          console.log('test', results.length);
-
 					nodemailerMailgun.sendMail({
-						from: 'Merry Crosstmas',
+						from: 'Merry Crosstmas <messages-noreply@merry-crosstmas.com>',
 						to: item.from.mail,
 						subject: 'Secret Santa friend designation',
 						html: results.html,
