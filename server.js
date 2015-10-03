@@ -1,5 +1,4 @@
 var express = require('express');
-var cors = require('cors');
 var bodyParser = require('body-parser');
 var app = express();
 var nodemailer = require('nodemailer');
@@ -11,17 +10,11 @@ var utils = require('./utils');
 var async = require('async');
 var ExpressBrute = require('express-brute');
 
-app.use(cors());
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({
 	extended: true
 })); // support encoded bodies
 app.use('/', express.static('views'));
-
-var corsOptions = {
-	origin: 'samuelmartineau.github.io',
-	methods: ['GET', 'POST']
-};
 
 var sanitizeConfig = {
 	allowedTags: ['b', 'i', 'em', 'strong', 'p', 'div', 'br'],
@@ -33,7 +26,7 @@ var sanitizeConfig = {
 var store = new ExpressBrute.MemoryStore(); // stores state locally, don't use this in production
 var bruteforce = new ExpressBrute(store);
 
-var re = /\$friend\$/gi;
+var re = /@friend/gi;
 
 var template = new EmailTemplate(path.join(__dirname, 'mail'));
 
@@ -49,7 +42,7 @@ var auth = {
 
 var nodemailerMailgun = nodemailer.createTransport(mg(auth));
 
-app.get('/test', cors(corsOptions), function(req, res) {
+app.get('/test', function(req, res) {
 	res.send({
 		message: 'API running'
 	});

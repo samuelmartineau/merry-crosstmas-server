@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/samuelmartineau/merry-crosstmas.git"
+    "url": "git+https://github.com/samuelmartineau/merry-crosstmas-server.git"
   },
   "keywords": [
     "christmass",
@@ -28,9 +28,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/samuelmartineau/merry-crosstmas/issues"
+    "url": "https://github.com/samuelmartineau/merry-crosstmas-server/issues"
   },
-  "homepage": "https://github.com/samuelmartineau/merry-crosstmas#readme",
+  "homepage": "https://github.com/samuelmartineau/merry-crosstmas-server#readme",
   "devDependencies": {
     "nodemon": "^1.7.1",
     "tape": "^4.2.1"
@@ -39,7 +39,6 @@
     "async": "^1.4.2",
     "body-parser": "^1.14.1",
     "clone": "^1.0.2",
-    "cors": "^2.7.1",
     "email-templates": "^2.0.1",
     "express": "^4.13.3",
     "express-brute": "^0.6.0",
