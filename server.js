@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({
 app.use('/', express.static('views'));
 
 var sanitizeConfig = {
-	allowedTags: ['b', 'i', 'em', 'strong', 'p', 'div', 'br'],
+	allowedTags: ['b', 'i', 'em', 'strong', 'p', 'div', 'br', 'span'],
 	allowedAttributes: {
 		'*': ['style']
 	}
