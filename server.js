@@ -8,13 +8,15 @@ var EmailTemplate = require('email-templates').EmailTemplate
 var path = require('path');
 var utils = require('./utils');
 var async = require('async');
+var cors = require('cors');
 var ExpressBrute = require('express-brute');
 
+app.use(cors());
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({
 	extended: true
 })); // support encoded bodies
-app.use('/', express.static('views'));
+app.use('/', express.static('merry-crosstmas-client'));
 
 var sanitizeConfig = {
 	allowedTags: ['b', 'i', 'em', 'strong', 'p', 'div', 'br', 'span'],

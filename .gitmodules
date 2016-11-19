@@ -1,0 +1,3 @@
+[submodule "merry-crosstmas-client"]
+	path = merry-crosstmas-client
+	url = https://github.com/samuelmartineau/merry-crosstmas-client.git
