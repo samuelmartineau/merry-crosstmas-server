@@ -16,7 +16,6 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({
 	extended: true
 })); // support encoded bodies
-app.use('/', express.static('merry-crosstmas-client'));
 
 var sanitizeConfig = {
 	allowedTags: ['b', 'i', 'em', 'strong', 'p', 'div', 'br', 'span'],
@@ -43,6 +42,10 @@ var auth = {
 }
 
 var nodemailerMailgun = nodemailer.createTransport(mg(auth));
+
+app.get('/', function() {
+	res.redirect(301, 'http://samuelmartineau.com/projects/merry-crosstmas/');
+});
 
 app.get('/test', function(req, res) {
 	res.send({
