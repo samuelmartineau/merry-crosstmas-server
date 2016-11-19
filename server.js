@@ -43,7 +43,7 @@ var auth = {
 
 var nodemailerMailgun = nodemailer.createTransport(mg(auth));
 
-app.get('/', function() {
+app.get('/', function(req, res) {
 	res.redirect(301, 'http://samuelmartineau.com/projects/merry-crosstmas/');
 });
 
