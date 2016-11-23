@@ -1,115 +1,172 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var app = express();
-var nodemailer = require('nodemailer');
-var mg = require('nodemailer-mailgun-transport');
-var sanitizeHtml = require('sanitize-html');
-var EmailTemplate = require('email-templates').EmailTemplate
-var path = require('path');
-var utils = require('./utils');
-var async = require('async');
-var cors = require('cors');
-var ExpressBrute = require('express-brute');
+const Hapi = require('hapi');
+const Inert = require('inert');
+const Vision = require('vision');
+const Joi = require('joi');
+const HapiSwagger = require('hapi-swagger');
+const nodemailer = require('nodemailer');
+const mg = require('nodemailer-mailgun-transport');
+const sanitizeHtml = require('sanitize-html');
+const {
+  EmailTemplate
+} = require('email-templates');
+const path = require('path');
+const async = require('async');
+const utils = require('./utils');
+const Pack = require('./package');
+const {
+  sanitizeConfig
+} = require('./config/sanitize');
+const friendTagName = /@friend/gi;
 
-app.use(cors());
-app.use(bodyParser.json()); // support json encoded bodies
-app.use(bodyParser.urlencoded({
-	extended: true
-})); // support encoded bodies
+const template = new EmailTemplate(path.join(__dirname, 'mail'));
 
-var sanitizeConfig = {
-	allowedTags: ['b', 'i', 'em', 'strong', 'p', 'div', 'br', 'span'],
-	allowedAttributes: {
-		'*': ['style']
-	}
-};
-
-var store = new ExpressBrute.MemoryStore(); // stores state locally, don't use this in production
-var bruteforce = new ExpressBrute(store);
-
-var re = /@friend/gi;
-
-var template = new EmailTemplate(path.join(__dirname, 'mail'));
-
-var port = process.env.PORT || 5000;
-
-// mailer auth
-var auth = {
-	auth: {
-		api_key: process.env.API_KEY,
-		domain: process.env.DOMAIN
-	}
+const mailerAuth = {
+  auth: {
+    api_key: process.env.API_KEY,
+    domain: process.env.DOMAIN
+  }
 }
 
-var nodemailerMailgun = nodemailer.createTransport(mg(auth));
+const nodemailerMailgun = nodemailer.createTransport(mg(mailerAuth));;
+const swaggerOptions = {
+  info: {
+    'title': 'Merry Crosstmas API Documentation',
+    'version': Pack.version,
+  }
+};
 
-app.get('/', function(req, res) {
-	res.redirect(301, 'http://samuelmartineau.com/projects/merry-crosstmas/');
+const server = new Hapi.Server();
+server.connection({
+  host: 'localhost',
+  port: process.env.PORT || 5000,
+  routes: {
+    cors: true
+  }
+});
+server.register([Inert, Vision, {
+  register: HapiSwagger,
+  options: swaggerOptions
+}, {
+  register: require('hapi-brute')
+}], {}, (err) => {
+  if (err) {
+    console.error('Failed to load plugin:', err);
+  }
 });
 
-app.get('/test', function(req, res) {
-	res.send({
-		message: 'API running'
-	});
+server.route({
+  method: 'GET',
+  path: '/',
+  handler: (request, reply) => {
+    return reply().redirect('http://samuelmartineau.com/projects/merry-crosstmas/');
+  }
 });
 
-app.post('/send',
-	bruteforce.prevent, // error 429 if we hit this route too often
-	function(req, res) {
-		//console.log(req.body);
-		var parameters = req.body;
+server.route({
+  method: 'GET',
+  config: {
+    plugins: {
+      brute: {
+        preResponse: true
+      }
+    }
+  },
+  path: '/test',
+  handler: (request, reply) => {
+    return reply({
+      message: 'API running'
+    });
+  }
+});
 
-		if (!utils.isValid(req.body)) {
-			res.status(400).send({
-				message: 'Invalid Parameters'
-			});
-		} else {
+const mailsAtOnce = 10;
 
-			var whoToWho = utils.getWhoToWho(req.body.contacts);
+server.route({
+  method: 'POST',
+  path: '/send',
+  config: {
+    handler: (request, reply) => {
+      if (!utils.isValid(request.payload)) {
+        return reply({
+          message: 'Invalid Parameters'
+        }).code(400);
+      }
 
-			var contentCleaned = sanitizeHtml(req.body.content, sanitizeConfig);
+      const whoToWho = utils.getWhoToWho(request.payload.contacts);
 
-			// Send 10 mails at once
-			async.mapLimit(whoToWho, 10, function(item, next) {
-				item.content = contentCleaned;
-				item.from.name = sanitizeHtml(item.from.name, sanitizeConfig);
-				item.to.name = sanitizeHtml(item.to.name, sanitizeConfig);
+      const contentCleaned = sanitizeHtml(request.payload.content, sanitizeConfig);
 
-				template.render(item, function(err, results) {
-					if (err) return next(err)
+      async.mapLimit(whoToWho, mailsAtOnce, (item, next) => {
+        item.content = contentCleaned;
+        item.from.name = sanitizeHtml(item.from.name, sanitizeConfig);
+        item.to.name = sanitizeHtml(item.to.name, sanitizeConfig);
 
-					nodemailerMailgun.sendMail({
-						from: 'Merry Crosstmas <messages-noreply@merry-crosstmas.com>',
-						to: item.from.mail,
-						subject: 'Secret Santa friend designation',
-						html: results.html.replace(re, item.to.name),
-						text: results.text
-					}, function(err, responseStatus) {
-						if (err) {
-							return next(err);
-						}
-						next(null, responseStatus.message);
-					});
-				})
-			}, function(err) {
-				if (err) {
-					console.error('error sending mail', err);
-					res.status(500).send({
-						message: 'Email sending error'
-					});
-				}
-				res.send({
-					message: 'Succesfully sent ' + whoToWho.length + ' messages'
-				});
-			})
-		}
-	});
+        template.render(item, function(err, results) {
+          if (err) return next(err)
+
+          nodemailerMailgun.sendMail({
+            from: 'Merry Crosstmas <messages-noreply@merry-crosstmas.com>',
+            to: item.from.mail,
+            subject: 'Secret Santa friend designation',
+            html: results.html.replace(friendTagName, item.to.name),
+            text: results.text
+          }, (err, responseStatus) => {
+            if (err) {
+              return next(err);
+            }
+            next(null, responseStatus.message);
+          });
+        });
+      }, (err) => {
+        if (err) {
+          console.error('error sending mail', err);
+          return reply({
+            message: 'Email sending error'
+          }).code(500);
+        }
+        return reply({
+          message: 'Succesfully sent ' + whoToWho.length + ' messages'
+        });
+      });
+    },
+    description: 'Send method',
+    notes: ['Method to send random mate target mail'],
+    plugins: {
+      'hapi-swagger': {
+        payloadType: 'form'
+      }
+    },
+    tags: ['api'],
+    validate: {
+      params: {},
+      payload: {
+        content: Joi.string()
+          .required()
+          .description('html content'),
+        contatcs: Joi.array(Joi.object().keys({
+            name: Joi.string().required(),
+            mail: Joi.string().required()
+          }))
+          .required()
+          .length(3)
+          .description('contacts list')
+      }
+    }
+  }
+});
 
 process.on('uncaughtException', function(err) {
-	console.log('uncaughtException', err);
+  console.log('uncaughtException', err);
 });
 
 // START THE SERVER
 // =============================================================================
-app.listen(port);
-console.log('Magic happens on port :', port);
+server.start((err) => {
+
+  if (err) {
+    throw err;
+  }
+  console.log('Magic happens on port :', server.info.uri);
+});
+
+module.exports = server;

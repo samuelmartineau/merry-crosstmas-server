@@ -1,15 +1,16 @@
 {
   "name": "merry-crosstmas-server",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "merry-crosstmas server",
   "main": "server.js",
   "engines": {
-    "npm": "~4.0.0"
+    "npm": "~6.0.0"
   },
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
-    "test": "node tests/**.js"
+    "test": "node tests/**.js",
+    "coveralls": "istanbul cover node_modules/.bin/lab -- -l -e development tests/server.js node_modules/.bin/tape tests/utils.js"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,7 @@
   "author": {
     "name": "Samuel Martineau",
     "mail": "samuelmartineau1990@gmail.com",
-    "url": "samuelmartineau.github.io"
+    "url": "samuelmartineau.com"
   },
   "license": "MIT",
   "bugs": {
@@ -32,24 +33,30 @@
   },
   "homepage": "https://github.com/samuelmartineau/merry-crosstmas-server#readme",
   "devDependencies": {
-    "nodemon": "^1.7.1",
-    "tape": "^4.2.1"
+    "code": "4.0.0",
+    "istanbul": "0.4.5",
+    "lab": "11.2.1",
+    "nodemon": "1.7.1",
+    "tape": "4.2.1"
   },
   "dependencies": {
-    "async": "^1.4.2",
-    "body-parser": "^1.14.1",
-    "clone": "^1.0.2",
-    "cors": "^2.8.1",
-    "email-templates": "^2.0.1",
-    "express": "^4.13.3",
-    "express-brute": "^0.6.0",
-    "jade": "^1.11.0",
-    "lodash-node": "^3.10.1",
-    "nodemailer": "^1.5.0",
-    "nodemailer-express-handlebars": "^1.0.0",
-    "nodemailer-mailgun-transport": "^1.0.1",
-    "path": "^0.12.7",
-    "sanitize-html": "^1.10.1"
+    "async": "2.1.4",
+    "body-parser": "1.14.1",
+    "cors": "2.8.1",
+    "email-templates": "2.0.1",
+    "hapi": "15.2.0",
+    "hapi-brute": "1.0.0",
+    "hapi-swagger": "7.4.0",
+    "inert": "4.0.2",
+    "joi": "10.0.1",
+    "lodash.shuffle": "4.2.0",
+    "lodash.uniq": "4.5.0",
+    "nodemailer": "1.5.0",
+    "nodemailer-express-handlebars": "1.0.0",
+    "nodemailer-mailgun-transport": "1.0.1",
+    "pug": "2.0.0-beta6",
+    "sanitize-html": "1.10.1",
+    "vision": "4.1.0"
   },
   "pre-commit": [
     "quality"
